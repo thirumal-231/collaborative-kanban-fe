@@ -1,14 +1,22 @@
 import React from "react";
 import Logo from "../components/Logo";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "../hooks/useUser";
 
 export default function Login() {
   const { mutate: loginUser } = useLogin();
+
+  const { data: user } = useUser();
+
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -16,13 +24,13 @@ export default function Login() {
     const data = Object.fromEntries(formData);
 
     loginUser(data, {
-      onSuccess: () => {
-        toast.success("Login successful");
+      onSuccess: (res) => {
+        toast.success(res.message);
         queryClient.invalidateQueries(["user"]);
         navigate("/dashboard", { replace: true });
       },
       onError: (err) => {
-        console.log(err.response?.data?.message || "Login failed!");
+        toast.error(err.response.data?.message);
       },
     });
   };

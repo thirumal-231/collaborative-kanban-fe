@@ -1,13 +1,34 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { useSignup } from "../hooks/useSignup";
+import toast from "react-hot-toast";
+import { useUser } from "../hooks/useUser";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { data: user } = useUser();
+  const { mutate: signupUser } = useSignup();
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleSignup = (e) => {
     e.preventDefault();
-    navigate("/dashboard", { replace: true });
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    console.log(data);
+    signupUser(data, {
+      onSuccess: (res) => {
+        console.log(res);
+        toast.success(res.message);
+        navigate("/login", { replace: true });
+      },
+      onError: (err) => {
+        toast.error(err.response.data.message);
+      },
+    });
   };
 
   return (
@@ -38,6 +59,7 @@ export default function Signup() {
             </label>
             <input
               type="name"
+              name="name"
               placeholder="Enter your name"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -49,6 +71,7 @@ export default function Signup() {
             </label>
             <input
               type="email"
+              name="email"
               placeholder="Enter your email"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -60,6 +83,7 @@ export default function Signup() {
             </label>
             <input
               type="password"
+              name="password"
               placeholder="Enter your password"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
