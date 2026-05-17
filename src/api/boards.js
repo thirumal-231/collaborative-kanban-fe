@@ -15,6 +15,11 @@ export const getBoards = async () => {
   return res.data.data;
 };
 
+export const getFullBoard = async (boardId) => {
+  const res = await api.get(`/boards/${boardId}/full`);
+  return res.data.data;
+};
+
 // export const signupUser = async (data) => {
 //   const res = await api.post("/auth/signup", data);
 //   return res.data;

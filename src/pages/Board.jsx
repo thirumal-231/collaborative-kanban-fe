@@ -8,9 +8,12 @@ import {
   Layout,
   SquareArrowOutUpRight,
 } from "lucide-react";
-import AddCard from "../components/AddCard";
 import Card from "../components/Card";
 import List from "../components/List";
+import AddList from "../components/AddList";
+import { useState } from "react";
+import { useFullBoard } from "../hooks/useBoards";
+import { useParams } from "react-router-dom";
 
 const todo = [
   "Linked List DSA",
@@ -39,12 +42,36 @@ const truKanban = [
 ];
 
 export default function Board() {
+  const [isAddListClicked, setisAddListClicked] = useState(false);
+
+  const { boardId } = useParams();
+  const { data: fullBoard, isPending, isError } = useFullBoard(boardId);
+
+  const toggleAddList = () => {
+    setisAddListClicked((prev) => !prev);
+  };
+
+  if (isPending) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-900 text-xl font-semibold text-white">
+        Loading your awesome board...
+      </div>
+    );
+  }
+
+  if (isError || !fullBoard) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-900 text-xl font-semibold text-red-400">
+        Failed to load the board data. Check your backend connection!
+      </div>
+    );
+  }
+
   return (
     <div
       className="relative h-screen overflow-x-auto overflow-y-hidden bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2070&auto=format&fit=crop')",
+        backgroundImage: `url(${fullBoard.image})`,
       }}
     >
       {/* OVERLAY */}
@@ -54,7 +81,7 @@ export default function Board() {
       <header className="relative z-10 flex items-center justify-between border-b border-white/10 bg-black/20 px-6 py-4 backdrop-blur-md">
         {/* LEFT */}
         <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-white">ToDo</h1>
+          <h1 className="text-3xl font-bold text-white">{fullBoard.title}</h1>
 
           <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-white backdrop-blur-sm">
             <Layout size={18} />
@@ -99,17 +126,35 @@ export default function Board() {
 
       {/* BOARD */}
       <div className="relative z-10 flex h-[calc(100vh-80px)] gap-3 overflow-x-auto px-4 py-5">
-        <List title="To do" cards={todo} />
-        <List title="Done" cards={done} completed />
-        <List title="TruKanban" cards={truKanban} />
+        {fullBoard.lists &&
+          Object.entries(fullBoard.lists).map(([listId, listData]) => (
+            <List
+              boardId={boardId}
+              listId={listData.id}
+              key={listId}
+              title={listData.title}
+              cards={listData.cards}
+            />
+          ))}
 
         {/* ADD LIST */}
-        <button className="h-fit min-w-[300px] rounded-xl bg-white/20 px-5 py-4 text-left text-xl font-semibold text-white backdrop-blur-md transition hover:bg-white/30">
-          <div className="flex items-center gap-2">
-            <Plus size={20} />
-            Add another list
+        {!isAddListClicked && (
+          <button
+            className="h-fit min-w-[300px] rounded-xl bg-white/20 px-5 py-4 text-left text-xl font-semibold text-white backdrop-blur-md transition hover:bg-white/30"
+            onClick={() => toggleAddList()}
+          >
+            <div className="flex items-center gap-2">
+              <Plus size={20} />
+              Add a list
+            </div>
+          </button>
+        )}
+        {/* Add list form */}
+        {isAddListClicked && (
+          <div className="h-fit min-w-[300px] rounded-xl bg-white/70 px-2 py-1 text-left text-xl font-semibold text-white backdrop-blur-md">
+            <AddList closeAddList={toggleAddList} />
           </div>
-        </button>
+        )}
       </div>
     </div>
   );

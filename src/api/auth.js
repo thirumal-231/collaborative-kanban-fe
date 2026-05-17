@@ -17,6 +17,5 @@ export const signupUser = async (data) => {
 
 export const getMe = async () => {
   const res = await api.get("/auth/me");
-  console.log(res);
   return res.data.data;
 };

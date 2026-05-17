@@ -24,7 +24,7 @@ export default function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/:boardid" element={<Board />} />
+              <Route path="/dashboard/:boardId" element={<Board />} />
             </Route>
           </Routes>
         </BrowserRouter>

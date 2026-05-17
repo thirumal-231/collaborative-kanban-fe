@@ -1,10 +1,10 @@
-export default function AddCard() {
+export default function AddCard({ closeCard }) {
   return (
     <div className="mt-1 space-y-2">
       {/* INPUT CARD */}
       <div className="rounded-md border border-gray-300 bg-white shadow-sm ">
         <textarea
-          placeholder="Enter a title or paste a link"
+          placeholder="Enter card title"
           rows={3}
           className="
             max-h-40
@@ -52,6 +52,7 @@ export default function AddCard() {
             hover:bg-gray-200
             hover:text-gray-700
           "
+          onClick={() => closeCard()}
         >
           ✕
         </button>
