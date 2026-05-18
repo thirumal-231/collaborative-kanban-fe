@@ -45,10 +45,17 @@ export default function List({ boardId, listId, title, cards, completed }) {
 
       {/* CARDS */}
       <div className="space-y-1">
-        {cards.map((card, i) => (
-          <Card key={i} text={card} completed={completed} />
+        {cards.map((card) => (
+          <Card
+            cardId={card.id}
+            key={card.id}
+            text={card.title}
+            completed={card.isCompleted}
+          />
         ))}
-        {isAddCardClicked && <AddCard closeCard={toggleAddCard} />}
+        {isAddCardClicked && (
+          <AddCard listId={listId} closeCard={toggleAddCard} />
+        )}
       </div>
 
       {/* FOOTER */}
