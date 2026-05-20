@@ -15,6 +15,16 @@ export const getBoards = async () => {
   return res.data.data;
 };
 
+export const updateBoard = async (boardId, data) => {
+  const res = await api.patch(`/boards/${boardId}`, data);
+  return res.data;
+};
+
+export const deleteBoard = async (boardId) => {
+  const res = await api.delete(`/boards/${boardId}`);
+  return res.data;
+};
+
 export const getFullBoard = async (boardId) => {
   const res = await api.get(`/boards/${boardId}/full`);
   return res.data.data;

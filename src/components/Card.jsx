@@ -77,7 +77,7 @@ export default function Card({ cardId, text, completed }) {
           className={`
       flex h-4 w-4 shrink-0 items-center justify-center rounded-full
       transition-colors
-      ${isCompleted ? "bg-green-500" : "bg-gray-300"}
+      ${isCompleted ? "bg-green-600" : "bg-gray-300"}
     `}
           onClick={handleCompleteCard}
         />
